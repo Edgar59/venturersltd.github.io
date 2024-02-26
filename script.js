@@ -1,3 +1,4 @@
+
 function toggleNav() {
     var navLinks = document.getElementById("nav-links");
     var navbarToggle = document.getElementsByClassName("navbar-toggle")[0];

@@ -37,17 +37,5 @@ function showSection(sectionId) {
             window.location.href = "index.html"; // Redirects to the home page or login page
         }
     }
-    function toggleNav() {
-        var navLinks = document.getElementById("nav-links");
-        var navbarToggle = document.getElementsByClassName("navbar-toggle")[0];
-        
-        if (navLinks.style.display === "none") {
-            navLinks.style.display = "block";
-            navbarToggle.style.display = "none";
-        } else {
-            navLinks.style.display = "none";
-            navbarToggle.style.display = "flex";
-        }
-    }
-
+    
 
