@@ -13,6 +13,7 @@ header{
     font-size: 1em;
     color: blue;
     text-align: center;
+    position: relative;
 }
 .navbar {
     background-color: #333;
@@ -37,11 +38,11 @@ header{
     width: 30px;
     height: 3px;
     background-color: #fff;
-    float: left;
+    float: right;
 }
 .imglogo{
    text-align: center;
-    background-color: aqua;
+    background-color: rgb(45, 43, 43);
 }
 .nav-links {
     list-style-type: none;
@@ -73,10 +74,8 @@ header {
     text-align: center;
     margin-top: 20px;
 }
-/* Add CSS styles for moving line */
-@keyframes moveLine {
-    0% { left: 100%; }
-    100% { left: -100%; }
+h2{
+    margin-left: 20px;
 }
 
 .navbar::before {
@@ -88,15 +87,6 @@ header {
     height: 2px;
     background-color: #333; 
     animation: moveLine 5s linear infinite; 
-}
-@keyframes moveH2 {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-}
-
-h2 {
-    position: absolute; 
-    animation: moveH2 15s linear infinite; 
 }
 
 
@@ -114,11 +104,3 @@ h2 {
     border-radius: 10px;
 }
 
-.close-btn {
-    display: none;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 20px;
-}
