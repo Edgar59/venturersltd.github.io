@@ -71,7 +71,7 @@
                 <label for="comment">REQUEST MATERIALS</label><br>
                 <textarea id="comment" name="comment" rows="4" cols="50"></textarea>
                 <br>
-                <button type="submit">Submit</button>
+                <button type="button">Submit</button>
             </form>
             <img src="Tar.jpg" alt="Blank">
             <img src="Roadlami.jpg" alt="Blank">
@@ -81,7 +81,7 @@
         <!-- Task manager -->
 
         <section id="section3" class="section">
-            <h1>TASK MANAGER</h1><hr>
+            <h1>SITE TASK MANAGER</h1><hr>
             <form>
                 <style>
                     body {
@@ -102,8 +102,15 @@
                         background-color: #e9e9e9;
                         border-radius: 5px;
                     }
+                    h1{
+                        text-align: center;
+                    }
+                    .task-controls {
+                        display: flex; /* Align buttons in a row */
+                        align-items: center; /* Center-align buttons vertically */
+                        gap: 10px; /* Add some space between controls */
+                    }
                     button {
-                        margin-left: 10px;
                         padding: 5px 10px;
                         border: none;
                         border-radius: 5px;
@@ -113,19 +120,19 @@
                         background-color: #4CAF50;
                         color: white;
                     }
+                    .create-time {
+                        background-color: #2196F3;
+                        color: white;
+                    }
                     #timer {
                         margin-top: 20px;
                         font-size: 18px;
                         font-weight: bold;
                     }
-                    h1{
-                        text-align: center;
-                    }
                 </style>
             </head>
             <body>
                 <div class="container">
-                
                     <div id="tasks">
                         <!-- Task elements will be inserted here by JavaScript -->
                     </div>
@@ -144,81 +151,101 @@
                         const tasksContainer = document.getElementById('tasks');
                         let countdown;
                         let currentTaskIndex = 0;
-                    
-                        // Create and display tasks
+            
                         tasksData.forEach((task, index) => {
                             const taskElement = document.createElement('div');
                             taskElement.className = 'task';
                             taskElement.innerHTML = `
                                 <span>${task}</span>
-                                <button class="start" ${index > 0 ? 'disabled' : ''}>Start</button>
-                                <button class="complete" disabled>Complete</button>
+                                <div class="task-controls">
+                                    <input type="datetime-local" class="time-input">
+                                    <button class="create-time">Set Time</button>
+                                    <button class="start" disabled>Start</button>
+                                    <button class="complete" disabled>Complete</button>
+                                </div>
                             `;
                             tasksContainer.appendChild(taskElement);
-                    
+            
+                            const createTimeButton = taskElement.querySelector('.create-time');
                             const startButton = taskElement.querySelector('.start');
                             const completeButton = taskElement.querySelector('.complete');
-                    
+                            const timeInput = taskElement.querySelector('.time-input');
+            
+                            createTimeButton.onclick = function() {
+                                const selectedTime = timeInput.value;
+                                if (!selectedTime) {
+                                    alert('Please select a valid time.');
+                                    return;
+                                }
+                                const selectedDateTime = new Date(selectedTime);
+                                const now = new Date();
+                                if (selectedDateTime <= now) {
+                                    alert('Please select a future time.');
+                                    return;
+                                }
+                                startButton.disabled = false;
+                            };
+            
                             startButton.onclick = function() {
                                 if (index > currentTaskIndex) {
-                                    alert('Complete the previous task.');
+                                    alert('Complete the previous task first.');
                                     return;
                                 }
-                                const endTime = prompt('Enter the end time as yyyy/mm/dd/hh/min:');
-                                const endTimeParsed = new Date(endTime.replace(/(\d{4})\/(\d{2})\/(\d{2})\/(\d{2})\/(\d{2})/, "$1-$2-$3T$4:$5"));
-                                if (isNaN(endTimeParsed)) {
-                                    alert('Invalid date format. Please follow the yyyy/mm/dd/hh/min format.');
-                                    return;
-                                }
+                                const selectedTime = timeInput.value;
+                                const endTime = new Date(selectedTime);
                                 const now = new Date();
-                                const diff = endTimeParsed - now;
-                                if (diff < 0) {
-                                    alert('End time must be in the future.');
-                                    return;
+                                const diff = endTime - now;
+            
+                                if (diff > 0) {
+                                    if (countdown) clearInterval(countdown);
+                                    countdown = setInterval(() => {
+                                        const now = new Date();
+                                        const timeLeft = endTime - now;
+                                        if (timeLeft <= 0) {
+                                            clearInterval(countdown);
+                                            document.getElementById('timer').textContent = 'Time Expired!';
+                                            completeButton.disabled = false;
+                                        } else {
+                                            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                                            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                                            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                                            document.getElementById('timer').textContent = `Time Left: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+                                        }
+                                    }, 1000);
+                                    completeButton.disabled = false;
+                                } else {
+                                    alert('The selected time is in the past. Please set a future time.');
                                 }
-                                if (countdown) clearInterval(countdown);
-                                countdown = setInterval(() => {
-                                    const now = new Date();
-                                    const timeLeft = endTimeParsed - now;
-                                    if (timeLeft <= 0) {
-                                        clearInterval(countdown);
-                                        document.getElementById('timer').textContent = 'Time Expired!';
-                                        completeButton.disabled = false; // Enable complete button if time expires
-                                    } else {
-                                        const minutes = Math.floor(timeLeft / 60000);
-                                        const seconds = ((timeLeft % 60000) / 1000).toFixed(0);
-                                        document.getElementById('timer').textContent = `Time Left: ${minutes}m ${seconds}s`;
-                                    }
-                                }, 1000);
-                                completeButton.disabled = false; // Enable the complete button once the timer starts
                             };
-                    
+            
                             completeButton.onclick = function() {
                                 clearInterval(countdown);
                                 document.getElementById('timer').textContent = 'Task completed!';
-                                taskElement.classList.add('completed'); // Optional: visually indicate task completion
+                                taskElement.classList.add('completed');
+                                alert('Task completed!');
                                 currentTaskIndex++;
                                 if (currentTaskIndex < tasksData.length) {
                                     const nextTask = tasksContainer.children[currentTaskIndex];
-                                    nextTask.querySelector('.start').disabled = false;
+                                    nextTask.querySelector('.create-time').disabled = false;
                                 } else {
                                     alert('Project completed!');
                                 }
                             };
                         });
-                    });              
-                </script>         
+                    });
+                </script> 
         </section>
 
         <!-- Communication -->
 
         <section id="section4" class="section">
             <h2>SEND AND RECIEVE MESSAGES</h2>
-            <form>
+            <form action="#" method="post">
                 <label for="comment">Write message</label><br>
                 <textarea id="comment" name="comment" rows="4" cols="50"></textarea>
                 <br>
-                <button type="submit">Send</button>
+                <button type="button">Send</button>
             </form>
             <div id="admin-response"></div>
         </section>
