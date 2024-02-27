@@ -131,7 +131,7 @@
                     }
                 </style>
             </head>
-            <body>
+            <secti>
                 <div class="container">
                     <h1>Construction Site Management</h1>
                     <div id="tasks"></div>
@@ -169,6 +169,16 @@
                             const timeInput = taskElement.querySelector('.time-input');
             
                             startButton.onclick = function() {
+                                const selectedDate = new Date(timeInput.value);
+                                const currentDate = new Date();
+                                currentDate.setHours(0, 0, 0, 0); // Reset hours, minutes, seconds, and milliseconds to compare dates without time
+            
+                                // Check if the selected date is before the current date
+                                if (selectedDate < currentDate) {
+                                    alert('ENTER VALID DATE');
+                                    return;
+                                }
+            
                                 if (!timeInput.value) {
                                     alert('Set time to start.');
                                     return;
@@ -218,7 +228,7 @@
                         }
                     });
                 </script>
-        </section>
+            </section>
     </div>
 
     <script src="scripts.js"></script>
