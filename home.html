@@ -131,7 +131,7 @@
                     }
                 </style>
             </head>
-            <secti>
+            <section>
                 <div class="container">
                     <h1>Construction Site Management</h1>
                     <div id="tasks"></div>
@@ -230,6 +230,29 @@
                 </script>
             </section>
     </div>
+
+    <!-- Communication -->
+
+    <section id="section4" class="section">
+        <h2>SEND AND RECIEVE MESSAGES</h2><hr>
+        <h2>CHOOSE YOUR ROLE</h2>
+        <form action="#" method="post">
+<select name="options" id="options-dropdown">
+    <option value="option1">Project Manager</option>
+    <option value="option2">Constructor</option>
+    <option value="option3">Surveyor</option>
+    <option value="option4">Engineer</option>
+    <option value="option5">Foreman</option>
+</select><br><br>
+
+            <label for="comment">Write message</label><br>
+            <textarea id="comment" name="comment" rows="4" cols="50"></textarea>
+            <br>
+            <button type="button">Send</button>
+        </form>
+        <div id="admin-response"></div>
+    </section>
+</div>
 
     <script src="scripts.js"></script>
    
