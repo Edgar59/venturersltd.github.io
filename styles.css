@@ -110,3 +110,12 @@ input[type="checkbox"] {
 .navigation a:hover {
     background-color: #5d00ff;
 }
+
+table{
+    font-family:cursive;
+    font-style:bold;
+    color:rgb(16, 16, 17);
+}
+input[type="checkbox"] {
+box-shadow: inset 3px 3px 5px rgba(87, 253, 45, 0.5);
+}
