@@ -20,7 +20,8 @@
         <section id="section1" class="section">
             <h2><b>Machinery management</b></h2><hr>
             <a href="index.html" class="logout-button" id="logoutButton">Logout</a>
-
+            
+          <!-- Machinery -->
 
             <form>
                 <label><b>REQUEST MACHINE </label></b>
@@ -62,6 +63,8 @@
             </form>
         </section>
 
+        <!-- Materials management -->
+
         <section id="section2" class="section">
             <h2><b></b>REQUEST MATERIALS FROM MANAGEMENT</b></h2><hr>
             <form>
@@ -75,20 +78,139 @@
             <img src="Lami.jpg" alt="Blank">
         </section>
 
+        <!-- Task manager -->
+
         <section id="section3" class="section">
-            <h2>TASK MANAGER</h2>
+            <h1>TASK MANAGER</h1><hr>
             <form>
-                <label>Start Task:</label>
-                <input type="time" name="time1">
-                <br>
-                <label>End Task:</label>
-                <input type="time" name="time2">
-                <br>
-                <button type="submit">Submit</button>
-            </form>
-            <input type="text" placeholder="Description">
-            <button type="button">Record</button>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f0f0f0;
+                        color: #333;
+                    }
+                    .container {
+                        max-width: 800px;
+                        margin: 20px auto;
+                        padding: 20px;
+                        background-color: #fff;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                    .task {
+                        margin-bottom: 20px;
+                        padding: 10px;
+                        background-color: #e9e9e9;
+                        border-radius: 5px;
+                    }
+                    button {
+                        margin-left: 10px;
+                        padding: 5px 10px;
+                        border: none;
+                        border-radius: 5px;
+                        cursor: pointer;
+                    }
+                    .start, .complete {
+                        background-color: #4CAF50;
+                        color: white;
+                    }
+                    #timer {
+                        margin-top: 20px;
+                        font-size: 18px;
+                        font-weight: bold;
+                    }
+                    h1{
+                        text-align: center;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                
+                    <div id="tasks">
+                        <!-- Task elements will be inserted here by JavaScript -->
+                    </div>
+                    <div id="timer"></div>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const tasksData = [
+                            '1. Site Preparation',
+                            '2. Subgrade Preparation/Sub-base Layer',
+                            '3. Base Layer',
+                            '4. Asphalt Layer(s)',
+                            '5. Finishing Touches',
+                            '6. Inspection'
+                        ];
+                        const tasksContainer = document.getElementById('tasks');
+                        let countdown;
+                        let currentTaskIndex = 0;
+                    
+                        // Create and display tasks
+                        tasksData.forEach((task, index) => {
+                            const taskElement = document.createElement('div');
+                            taskElement.className = 'task';
+                            taskElement.innerHTML = `
+                                <span>${task}</span>
+                                <button class="start" ${index > 0 ? 'disabled' : ''}>Start</button>
+                                <button class="complete" disabled>Complete</button>
+                            `;
+                            tasksContainer.appendChild(taskElement);
+                    
+                            const startButton = taskElement.querySelector('.start');
+                            const completeButton = taskElement.querySelector('.complete');
+                    
+                            startButton.onclick = function() {
+                                if (index > currentTaskIndex) {
+                                    alert('Complete the previous task.');
+                                    return;
+                                }
+                                const endTime = prompt('Enter the end time as yyyy/mm/dd/hh/min:');
+                                const endTimeParsed = new Date(endTime.replace(/(\d{4})\/(\d{2})\/(\d{2})\/(\d{2})\/(\d{2})/, "$1-$2-$3T$4:$5"));
+                                if (isNaN(endTimeParsed)) {
+                                    alert('Invalid date format. Please follow the yyyy/mm/dd/hh/min format.');
+                                    return;
+                                }
+                                const now = new Date();
+                                const diff = endTimeParsed - now;
+                                if (diff < 0) {
+                                    alert('End time must be in the future.');
+                                    return;
+                                }
+                                if (countdown) clearInterval(countdown);
+                                countdown = setInterval(() => {
+                                    const now = new Date();
+                                    const timeLeft = endTimeParsed - now;
+                                    if (timeLeft <= 0) {
+                                        clearInterval(countdown);
+                                        document.getElementById('timer').textContent = 'Time Expired!';
+                                        completeButton.disabled = false; // Enable complete button if time expires
+                                    } else {
+                                        const minutes = Math.floor(timeLeft / 60000);
+                                        const seconds = ((timeLeft % 60000) / 1000).toFixed(0);
+                                        document.getElementById('timer').textContent = `Time Left: ${minutes}m ${seconds}s`;
+                                    }
+                                }, 1000);
+                                completeButton.disabled = false; // Enable the complete button once the timer starts
+                            };
+                    
+                            completeButton.onclick = function() {
+                                clearInterval(countdown);
+                                document.getElementById('timer').textContent = 'Task completed!';
+                                taskElement.classList.add('completed'); // Optional: visually indicate task completion
+                                currentTaskIndex++;
+                                if (currentTaskIndex < tasksData.length) {
+                                    const nextTask = tasksContainer.children[currentTaskIndex];
+                                    nextTask.querySelector('.start').disabled = false;
+                                } else {
+                                    alert('Project completed!');
+                                }
+                            };
+                        });
+                    });              
+                </script>         
         </section>
+
+        <!-- Communication -->
 
         <section id="section4" class="section">
             <h2>SEND AND RECIEVE MESSAGES</h2>
