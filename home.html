@@ -102,13 +102,13 @@
                         background-color: #e9e9e9;
                         border-radius: 5px;
                     }
-                    h1{
-                        text-align: center;
+                    .task.completed {
+                        background-color: #ccffcc;
                     }
                     .task-controls {
-                        display: flex; /* Align buttons in a row */
-                        align-items: center; /* Center-align buttons vertically */
-                        gap: 10px; /* Add some space between controls */
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
                     }
                     button {
                         padding: 5px 10px;
@@ -116,12 +116,12 @@
                         border-radius: 5px;
                         cursor: pointer;
                     }
-                    .start, .complete {
+                    .start {
                         background-color: #4CAF50;
                         color: white;
                     }
-                    .create-time {
-                        background-color: #2196F3;
+                    .complete {
+                        background-color: #f44336;
                         color: white;
                     }
                     #timer {
@@ -133,10 +133,9 @@
             </head>
             <body>
                 <div class="container">
-                    <div id="tasks">
-                        <!-- Task elements will be inserted here by JavaScript -->
-                    </div>
-                    <div id="timer"></div>
+                    <h1>Construction Site Management</h1>
+                    <div id="tasks"></div>
+                    <div id="timer">Set a time and start a task</div>
                 </div>
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
@@ -158,96 +157,67 @@
                             taskElement.innerHTML = `
                                 <span>${task}</span>
                                 <div class="task-controls">
-                                    <input type="datetime-local" class="time-input">
-                                    <button class="create-time">Set Time</button>
-                                    <button class="start" disabled>Start</button>
+                                    <input type="datetime-local" class="time-input" ${index !== 0 ? 'disabled' : ''}>
+                                    <button class="start" ${index !== 0 ? 'disabled' : ''}>Start</button>
                                     <button class="complete" disabled>Complete</button>
                                 </div>
                             `;
                             tasksContainer.appendChild(taskElement);
             
-                            const createTimeButton = taskElement.querySelector('.create-time');
                             const startButton = taskElement.querySelector('.start');
                             const completeButton = taskElement.querySelector('.complete');
                             const timeInput = taskElement.querySelector('.time-input');
             
-                            createTimeButton.onclick = function() {
-                                const selectedTime = timeInput.value;
-                                if (!selectedTime) {
-                                    alert('Please select a valid time.');
-                                    return;
-                                }
-                                const selectedDateTime = new Date(selectedTime);
-                                const now = new Date();
-                                if (selectedDateTime <= now) {
-                                    alert('Please select a future time.');
-                                    return;
-                                }
-                                startButton.disabled = false;
-                            };
-            
                             startButton.onclick = function() {
-                                if (index > currentTaskIndex) {
-                                    alert('Complete the previous task first.');
+                                if (!timeInput.value) {
+                                    alert('Set time to start.');
                                     return;
                                 }
-                                const selectedTime = timeInput.value;
-                                const endTime = new Date(selectedTime);
-                                const now = new Date();
-                                const diff = endTime - now;
-            
-                                if (diff > 0) {
-                                    if (countdown) clearInterval(countdown);
-                                    countdown = setInterval(() => {
-                                        const now = new Date();
-                                        const timeLeft = endTime - now;
-                                        if (timeLeft <= 0) {
-                                            clearInterval(countdown);
-                                            document.getElementById('timer').textContent = 'Time Expired!';
-                                            completeButton.disabled = false;
-                                        } else {
-                                            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-                                            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                                            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                                            document.getElementById('timer').textContent = `Time Left: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-                                        }
-                                    }, 1000);
-                                    completeButton.disabled = false;
-                                } else {
-                                    alert('The selected time is in the past. Please set a future time.');
+                                if (currentTaskIndex !== index) {
+                                    alert('Do previous task first');
+                                    return;
                                 }
+                                startButton.disabled = true; // Prevent re-starting
+                                completeButton.disabled = false;
+                                startCountdown(timeInput.value, completeButton, index);
                             };
             
                             completeButton.onclick = function() {
                                 clearInterval(countdown);
                                 document.getElementById('timer').textContent = 'Task completed!';
                                 taskElement.classList.add('completed');
-                                alert('Task completed!');
+                                completeButton.disabled = true;
                                 currentTaskIndex++;
                                 if (currentTaskIndex < tasksData.length) {
-                                    const nextTask = tasksContainer.children[currentTaskIndex];
-                                    nextTask.querySelector('.create-time').disabled = false;
+                                    let nextTaskControls = tasksContainer.children[currentTaskIndex].querySelectorAll('.time-input, .start');
+                                    nextTaskControls.forEach(control => control.disabled = false);
                                 } else {
                                     alert('Project completed!');
                                 }
                             };
                         });
+            
+                        function startCountdown(selectedTime, completeButton, index) {
+                            const endTime = new Date(selectedTime).getTime();
+                            countdown = setInterval(function() {
+                                const now = new Date().getTime();
+                                const timeLeft = endTime - now;
+            
+                                if (timeLeft <= 0) {
+                                    clearInterval(countdown);
+                                    document.getElementById('timer').textContent = 'Time Expired!';
+                                    completeButton.click();
+                                } else {
+                                    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                                    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                                    document.getElementById('timer').textContent = `Time Left: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+                                }
+                            }, 1000);
+                        }
                     });
-                </script> 
-        </section>
-
-        <!-- Communication -->
-
-        <section id="section4" class="section">
-            <h2>SEND AND RECIEVE MESSAGES</h2>
-            <form action="#" method="post">
-                <label for="comment">Write message</label><br>
-                <textarea id="comment" name="comment" rows="4" cols="50"></textarea>
-                <br>
-                <button type="button">Send</button>
-            </form>
-            <div id="admin-response"></div>
+                </script>
         </section>
     </div>
 
